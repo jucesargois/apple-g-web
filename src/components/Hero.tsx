@@ -47,10 +47,10 @@ export function Hero() {
             Ver Catálogo
           </Button>
           
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             size="xl"
-            className="min-w-[200px] border-white/30 text-black hover:bg-black/10"
+            className="min-w-[200px] border-white/40 text-white hover:bg-white/10"
             onClick={() => scrollToSection('contato')}
           >
             Falar Conosco

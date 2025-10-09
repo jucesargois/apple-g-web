@@ -60,6 +60,81 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Integração com Contentful
+
+Esta aplicação já está preparada para consumir os dados do Contentful. Enquanto as credenciais não forem configuradas o projeto utilizará os dados mockados que já existiam anteriormente, garantindo que a UI continue funcionando em desenvolvimento.
+
+### Variáveis de ambiente
+
+1. Copie o arquivo `.env.example` para `.env`.
+2. Preencha os valores fornecidos pelo Contentful:
+
+```
+VITE_CONTENTFUL_SPACE_ID=<ID do espaço>
+VITE_CONTENTFUL_ENVIRONMENT=master # ou outro ambiente, se aplicável
+VITE_CONTENTFUL_DELIVERY_TOKEN=<Content Delivery API - access token>
+```
+
+> Todas as variáveis são lidas via `import.meta.env`, portanto não é necessário reiniciar o servidor do Vite após alterações, bastando parar e subir novamente o comando `npm run dev`.
+
+### Modelos de conteúdo sugeridos
+
+Crie os seguintes *Content Types* no Contentful (a estrutura também está documentada em `src/types/contentful.ts` na constante `contentModels`):
+
+#### `storeSettings`
+
+| Campo | Tipo | Obrigatório | Observações |
+| --- | --- | --- | --- |
+| `storeName` | Symbol | ✅ | Nome exibido no cabeçalho |
+| `whatsappNumber` | Symbol | ✅ | Utilizado nos botões de contato (`5511999999999`) |
+| `instagramUrl` | Symbol | ✅ | URL completa do perfil |
+| `phoneNumber` | Symbol | ✅ | Telefone formatado |
+| `email` | Symbol | ✅ | E-mail de contato |
+| `logo` | Asset | opcional | Logo exibida no cabeçalho |
+| `heroTitle` | Symbol | opcional | Texto principal do hero |
+| `heroSubtitle` | Symbol | opcional | Texto secundário do hero |
+| `heroDescription` | Text | opcional | Descrição do hero |
+| `heroBackground` | Asset | opcional | Imagem de fundo do hero |
+| `heroHighlight` | Symbol | opcional | Palavra em destaque após o título |
+
+> Recomenda-se manter apenas uma entrada publicada para este content type.
+
+#### `category`
+
+| Campo | Tipo | Obrigatório | Observações |
+| --- | --- | --- | --- |
+| `name` | Symbol | ✅ | Nome exibido nos filtros |
+| `slug` | Symbol | ✅ | Identificador único (ex.: `iphone-15`) |
+| `description` | Text | opcional | Texto adicional |
+| `productCount` | Integer | opcional | Usado para sobrescrever a contagem automática de produtos |
+
+#### `product`
+
+| Campo | Tipo | Obrigatório | Observações |
+| --- | --- | --- | --- |
+| `name` | Symbol | ✅ | Nome do produto |
+| `shortDescription` | Symbol | ✅ | Texto curto exibido no card |
+| `description` | Text | ✅ | Descrição completa |
+| `price` | Number | ✅ | Valor atual |
+| `originalPrice` | Number | opcional | Valor antes do desconto |
+| `image` | Asset | ✅ | Imagem principal |
+| `isNew` | Boolean | ✅ | Marca o selo "Novo" |
+| `category` | Reference (Entry) | ✅ | Referencia `category` |
+| `featured` | Boolean | ✅ | Identifica destaques |
+| `stock` | Integer | ✅ | Estoque disponível |
+
+### Como os dados são consumidos
+
+- `Header`, `Hero` e `Footer` utilizam os dados do content type `storeSettings`.
+- `ProductGrid` e `CategoryFilter` consomem `product` e `category` para montar o catálogo e os filtros.
+- Enquanto não houver dados publicados, componentes exibem estados vazios ou desabilitam ações como contato via WhatsApp.
+
+### Cache de requisições
+
+- A aplicação utiliza o React Query com `staleTime` de 5 minutos e `gcTime` de 30 minutos, evitando chamadas desnecessárias à Content Delivery API.
+- Além disso existe um cache em memória (`src/lib/contentful/index.ts`) que guarda as respostas de cada endpoint pelo mesmo período.
+- Sempre que as variáveis de ambiente não estiverem definidas, o código retorna os mocks (`src/lib/contentful/mock-data.ts`), garantindo que o plano gratuito da Contentful não seja consumido em ambientes de desenvolvimento.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/711b50f7-1cc8-49b4-aa31-fc371e4d753c) and click on Share -> Publish.

@@ -1,21 +1,41 @@
 import { MessageCircle, Instagram, Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Configurações que virão do Contentful
-const WHATSAPP_NUMBER = '5511999999999';
-const INSTAGRAM_URL = 'https://instagram.com/istore';
-const PHONE_NUMBER = '(11) 99999-9999';
-const EMAIL = 'contato@istore.com.br';
+interface FooterProps {
+  whatsappNumber?: string;
+  instagramUrl?: string;
+  phoneNumber?: string;
+  email?: string;
+}
 
-export function Footer() {
+export function Footer({
+  whatsappNumber,
+  instagramUrl,
+  phoneNumber,
+  email,
+}: FooterProps) {
+  const instagramHandle = instagramUrl
+    ? instagramUrl
+        .replace(/https?:\/\/(www\.)?instagram\.com\//, '@')
+        .replace(/\/$/, '')
+    : '@istore';
+
   const handleWhatsAppClick = () => {
+    if (!whatsappNumber) {
+      return;
+    }
+
     const message = encodeURIComponent('Olá, gostaria de saber mais sobre os produtos disponíveis!');
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const handleInstagramClick = () => {
-    window.open(INSTAGRAM_URL, '_blank');
+    if (!instagramUrl) {
+      return;
+    }
+
+    window.open(instagramUrl, '_blank');
   };
 
   return (
@@ -41,11 +61,12 @@ export function Footer() {
               size="xl"
               onClick={handleWhatsAppClick}
               className="w-full max-w-sm mb-4"
+              disabled={!whatsappNumber}
             >
               <MessageCircle className="mr-2 h-6 w-6" />
-              WhatsApp
+              {whatsappNumber ? 'WhatsApp' : 'WhatsApp indisponível'}
             </Button>
-            <p className="text-sm opacity-80">{PHONE_NUMBER}</p>
+            <p className="text-sm opacity-80">{phoneNumber ?? '(00) 00000-0000'}</p>
             <p className="text-xs opacity-60 mt-1">
               Atendimento de seg a sex, das 9h às 18h
             </p>
@@ -58,11 +79,12 @@ export function Footer() {
               size="xl"
               onClick={handleInstagramClick}
               className="w-full max-w-sm mb-4"
+              disabled={!instagramUrl}
             >
               <Instagram className="mr-2 h-6 w-6" />
-              Instagram
+              {instagramUrl ? 'Instagram' : 'Instagram indisponível'}
             </Button>
-            <p className="text-sm opacity-80">@istore</p>
+            <p className="text-sm opacity-80">{instagramHandle}</p>
             <p className="text-xs opacity-60 mt-1">
               Acompanhe nossas novidades e promoções
             </p>
@@ -73,11 +95,11 @@ export function Footer() {
         <div className="flex flex-col sm:flex-row justify-center items-center gap-8 text-sm opacity-80 mb-8">
           <div className="flex items-center gap-2">
             <Phone className="h-4 w-4" />
-            <span>{PHONE_NUMBER}</span>
+            <span>{phoneNumber ?? '(00) 00000-0000'}</span>
           </div>
           <div className="flex items-center gap-2">
             <Mail className="h-4 w-4" />
-            <span>{EMAIL}</span>
+            <span>{email ?? 'contato@exemplo.com'}</span>
           </div>
         </div>
 

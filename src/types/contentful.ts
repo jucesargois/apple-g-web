@@ -1,10 +1,22 @@
-// Tipos para integração futura com Contentful
+export interface ContentfulLink<T extends 'Entry' | 'Asset'> {
+  sys: {
+    type: 'Link';
+    linkType: T;
+    id: string;
+  };
+}
 
 export interface ContentfulAsset {
+  sys: {
+    id: string;
+  };
   fields: {
     title: string;
+    description?: string;
     file: {
       url: string;
+      fileName: string;
+      contentType: string;
       details: {
         size: number;
         image?: {
@@ -12,106 +24,200 @@ export interface ContentfulAsset {
           height: number;
         };
       };
-      fileName: string;
-      contentType: string;
     };
   };
 }
 
-export interface StoreSettings {
-  fields: {
-    logo: ContentfulAsset;
-    storeName: string;
-    whatsappNumber: string;
-    instagramUrl: string;
-    phoneNumber: string;
-    email: string;
-    primaryColor: string;
-    secondaryColor: string;
-    accentColor: string;
-  };
-}
-
-export interface Product {
-  fields: {
-    name: string;
-    description: string;
-    shortDescription: string;
-    price: number;
-    originalPrice?: number;
-    image: ContentfulAsset;
-    isNew: boolean;
-    category: string;
-    featured: boolean;
-    stock: number;
-  };
+export interface ContentfulEntry<TFields> {
   sys: {
     id: string;
     createdAt: string;
     updatedAt: string;
+    contentType?: {
+      sys: {
+        id: string;
+        type: string;
+      };
+    };
   };
+  fields: TFields;
 }
 
-export interface Category {
-  fields: {
-    name: string;
-    slug: string;
-    description?: string;
-    productCount: number;
-  };
-  sys: {
-    id: string;
-    createdAt: string;
-    updatedAt: string;
-  };
+export interface ProductFields {
+  name: string;
+  description: string;
+  shortDescription: string;
+  price: number;
+  originalPrice?: number;
+  image: ContentfulLink<'Asset'>;
+  isNew: boolean;
+  category: ContentfulLink<'Entry'>;
+  featured: boolean;
+  stock: number;
 }
 
-export interface ContentfulResponse<T> {
-  sys: {
-    type: string;
-  };
+export interface CategoryFields {
+  name: string;
+  slug: string;
+  description?: string;
+  productCount?: number;
+}
+
+export interface StoreSettingsFields {
+  storeName: string;
+  whatsappNumber: string;
+  instagramUrl: string;
+  phoneNumber: string;
+  email: string;
+  logo?: ContentfulLink<'Asset'>;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroDescription?: string;
+  heroBackground?: ContentfulLink<'Asset'>;
+  heroHighlight?: string;
+}
+
+export interface ContentfulCollection<T> {
   total: number;
   skip: number;
   limit: number;
-  items: T[];
+  items: Array<ContentfulEntry<T>>;
+  includes?: {
+    Asset?: ContentfulAsset[];
+    Entry?: Array<ContentfulEntry<Record<string, unknown>>>;
+  };
 }
 
-// Estrutura das configurações do Contentful que você precisa criar:
+export interface StorefrontCategory {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  productCount: number;
+}
 
-/*
-1. Content Type: "storeSettings" (Configurações da Loja)
-   Fields:
-   - logo (Media) - Logo da loja
-   - storeName (Short text) - Nome da loja
-   - whatsappNumber (Short text) - Número do WhatsApp (formato: 5511999999999)
-   - instagramUrl (Short text) - URL do Instagram
-   - phoneNumber (Short text) - Telefone formatado
-   - email (Short text) - Email de contato
-   - primaryColor (Short text) - Cor primária (HSL format)
-   - secondaryColor (Short text) - Cor secundária (HSL format)
-   - accentColor (Short text) - Cor de destaque (HSL format)
+export interface StorefrontProduct {
+  id: string;
+  name: string;
+  description: string;
+  shortDescription: string;
+  price: number;
+  originalPrice?: number;
+  imageUrl: string;
+  isNew: boolean;
+  category: StorefrontCategory;
+  featured: boolean;
+  stock: number;
+}
 
-2. Content Type: "product" (Produto)
-   Fields:
-   - name (Short text) - Nome do produto
-   - description (Long text) - Descrição completa
-   - shortDescription (Short text) - Descrição curta para o card
-   - price (Number) - Preço atual
-   - originalPrice (Number, optional) - Preço original (para mostrar desconto)
-   - image (Media) - Imagem principal do produto
-   - isNew (Boolean) - Se é um produto novo
-   - category (Reference to Category) - Categoria do produto
-   - featured (Boolean) - Se é produto em destaque
-   - stock (Number) - Quantidade em estoque
+export interface StorefrontSettings {
+  storeName: string;
+  whatsappNumber: string;
+  instagramUrl: string;
+  phoneNumber: string;
+  email: string;
+  logoUrl?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroDescription?: string;
+  heroBackgroundUrl?: string;
+  heroHighlight?: string;
+}
 
-3. Content Type: "category" (Categoria)
-   Fields:
-   - name (Short text) - Nome da categoria
-   - slug (Short text) - Slug único para URLs (ex: iphone-15-series)
-   - description (Long text, optional) - Descrição da categoria
-   - productCount (Number) - Contador automático de produtos
+export interface StorefrontContent {
+  products: StorefrontProduct[];
+  categories: StorefrontCategory[];
+  settings: StorefrontSettings | null;
+}
 
-Para busca no Contentful use:
-- Search API: https://cdn.contentful.com/spaces/YOUR_SPACE_ID/entries?content_type=product&query=TERMO_BUSCA
-- Filter by category: https://cdn.contentful.com/spaces/YOUR_SPACE_ID/entries?content_type=product&fields.category.sys.id=CATEGORY_ID
-*/
+export interface ContentfulError {
+  status: number;
+  statusText: string;
+  message: string;
+}
+
+export interface ContentModelField {
+  id: string;
+  name: string;
+  type: string;
+  required?: boolean;
+  description?: string;
+  validations?: unknown[];
+  linkType?: string;
+}
+
+export interface ContentModelDefinition {
+  id: string;
+  name: string;
+  description?: string;
+  displayField?: string;
+  fields: ContentModelField[];
+}
+
+export const contentModels: ContentModelDefinition[] = [
+  {
+    id: 'storeSettings',
+    name: 'Configurações da Loja',
+    description: 'Informações gerais e canais de contato exibidos no site.',
+    displayField: 'storeName',
+    fields: [
+      { id: 'storeName', name: 'Nome da loja', type: 'Symbol', required: true },
+      { id: 'whatsappNumber', name: 'Número do WhatsApp', type: 'Symbol', required: true },
+      { id: 'instagramUrl', name: 'URL do Instagram', type: 'Symbol', required: true },
+      { id: 'phoneNumber', name: 'Telefone', type: 'Symbol', required: true },
+      { id: 'email', name: 'E-mail', type: 'Symbol', required: true },
+      { id: 'logo', name: 'Logo', type: 'Link', linkType: 'Asset' },
+      { id: 'heroTitle', name: 'Título do Hero', type: 'Symbol' },
+      { id: 'heroSubtitle', name: 'Subtítulo do Hero', type: 'Symbol' },
+      { id: 'heroDescription', name: 'Descrição do Hero', type: 'Text' },
+      { id: 'heroBackground', name: 'Imagem de Fundo do Hero', type: 'Link', linkType: 'Asset' },
+      { id: 'heroHighlight', name: 'Texto em destaque do Hero', type: 'Symbol' },
+    ],
+  },
+  {
+    id: 'category',
+    name: 'Categoria',
+    description: 'Categorias de produtos utilizadas para filtro no catálogo.',
+    displayField: 'name',
+    fields: [
+      { id: 'name', name: 'Nome', type: 'Symbol', required: true },
+      { id: 'slug', name: 'Slug', type: 'Symbol', required: true },
+      { id: 'description', name: 'Descrição', type: 'Text' },
+      {
+        id: 'productCount',
+        name: 'Quantidade de produtos',
+        type: 'Integer',
+        description: 'Campo opcional para sobrescrever a contagem automática de produtos.',
+      } as ContentModelField,
+    ],
+  },
+  {
+    id: 'product',
+    name: 'Produto',
+    description: 'Produtos exibidos no catálogo da loja.',
+    displayField: 'name',
+    fields: [
+      { id: 'name', name: 'Nome', type: 'Symbol', required: true },
+      { id: 'shortDescription', name: 'Descrição curta', type: 'Symbol', required: true },
+      { id: 'description', name: 'Descrição completa', type: 'Text', required: true },
+      { id: 'price', name: 'Preço atual', type: 'Number', required: true },
+      { id: 'originalPrice', name: 'Preço original', type: 'Number' },
+      { id: 'image', name: 'Imagem principal', type: 'Link', linkType: 'Asset', required: true },
+      { id: 'isNew', name: 'Produto novo?', type: 'Boolean', required: true },
+      {
+        id: 'category',
+        name: 'Categoria',
+        type: 'Link',
+        linkType: 'Entry',
+        required: true,
+        validations: [
+          {
+            linkContentType: ['category'],
+          },
+        ],
+      } as ContentModelField,
+      { id: 'featured', name: 'Produto em destaque?', type: 'Boolean', required: true },
+      { id: 'stock', name: 'Estoque', type: 'Integer', required: true },
+    ],
+  },
+];

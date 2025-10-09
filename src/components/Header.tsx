@@ -5,9 +5,11 @@ import logo from '@/assets/logo.png';
 
 interface HeaderProps {
   onNavigate: (section: string) => void;
+  storeName?: string;
+  logoUrl?: string;
 }
 
-export function Header({ onNavigate }: HeaderProps) {
+export function Header({ onNavigate, storeName = 'iStore', logoUrl }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const scrollToSection = (sectionId: string) => {
@@ -24,13 +26,13 @@ export function Header({ onNavigate }: HeaderProps) {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <img 
-              src={logo} 
-              alt="Logo da Loja" 
-              className="h-10 w-10 object-contain"
+            <img
+              src={logoUrl || logo}
+              alt={`Logo da ${storeName}`}
+              className="h-10 w-10 object-contain rounded"
             />
             <span className="text-xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-              iStore
+              {storeName}
             </span>
           </div>
 

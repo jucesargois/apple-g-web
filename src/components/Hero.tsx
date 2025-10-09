@@ -2,7 +2,21 @@ import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 import heroBg from '@/assets/hero-bg.jpg';
 
-export function Hero() {
+interface HeroProps {
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  backgroundUrl?: string;
+  highlight?: string;
+}
+
+export function Hero({
+  title = 'iPhones',
+  subtitle = 'com Garantia Total',
+  description = 'Entrega rápida e segura • Produtos originais • Suporte completo',
+  backgroundUrl,
+  highlight = 'Originais',
+}: HeroProps) {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -15,7 +29,7 @@ export function Hero() {
       {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroBg})` }}
+        style={{ backgroundImage: `url(${backgroundUrl || heroBg})` }}
       >
         <div className="absolute inset-0 bg-gradient-hero opacity-90"></div>
       </div>
@@ -23,19 +37,13 @@ export function Hero() {
       {/* Content */}
       <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
         <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-6 animate-fade-in">
-          iPhones{' '}
-          <span className="bg-gradient-accent bg-clip-text text-transparent">
-            Originais
-          </span>
+          {title}{' '}
+          <span className="bg-gradient-accent bg-clip-text text-transparent">{highlight}</span>
         </h1>
-        
-        <p className="text-xl sm:text-2xl lg:text-3xl mb-4 opacity-90 animate-fade-in">
-          com Garantia Total
-        </p>
-        
-        <p className="text-lg sm:text-xl mb-12 opacity-80 max-w-2xl mx-auto animate-fade-in">
-          Entrega rápida e segura • Produtos originais • Suporte completo
-        </p>
+
+        <p className="text-xl sm:text-2xl lg:text-3xl mb-4 opacity-90 animate-fade-in">{subtitle}</p>
+
+        <p className="text-lg sm:text-xl mb-12 opacity-80 max-w-2xl mx-auto animate-fade-in">{description}</p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
           <Button 

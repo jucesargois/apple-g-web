@@ -12,9 +12,10 @@ import type {
   StorefrontSettings,
 } from '@/types/contentful';
 
-const SPACE_ID = import.meta.env.CONTENTFUL_SPACE_ID;
-const ENVIRONMENT = import.meta.env.CONTENTFUL_ENVIRONMENT ?? 'master';
-const DELIVERY_TOKEN = import.meta.env.CONTENTFUL_MANAGEMENT_TOKEN;
+const SPACE_ID = import.meta.env.VITE_CONTENTFUL_SPACE_ID;
+const ENVIRONMENT = import.meta.env.VITE_CONTENTFUL_ENVIRONMENT ?? 'master';
+const DELIVERY_TOKEN = import.meta.env.VITE_CONTENTFUL_DELIVERY_TOKEN;
+const LOCALE = import.meta.env.VITE_CONTENTFUL_LOCALE?.trim();
 
 const BASE_URL = SPACE_ID
   ? `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT}`
@@ -60,10 +61,13 @@ async function fetchContentful<T>(
 
   const params = new URLSearchParams({
     access_token: DELIVERY_TOKEN,
-    locale: 'pt-BR',
     include: '2',
     ...searchParams,
   });
+
+  if (LOCALE) {
+    params.set('locale', LOCALE);
+  }
 
   const url = `${BASE_URL}${path}?${params.toString()}`;
 

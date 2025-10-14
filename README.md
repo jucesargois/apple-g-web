@@ -70,9 +70,9 @@ Esta aplicação já está preparada para consumir os dados do Contentful. Enqua
 2. Preencha os valores fornecidos pelo Contentful:
 
 ```
-VITE_CONTENTFUL_SPACE_ID=<ID do espaço>
-VITE_CONTENTFUL_ENVIRONMENT=master # ou outro ambiente, se aplicável
-VITE_CONTENTFUL_DELIVERY_TOKEN=<Content Delivery API - access token>
+CONTENTFUL_SPACE_ID=<ID do espaço>
+CONTENTFUL_ENVIRONMENT=master # ou outro ambiente, se aplicável
+CONTENTFUL_MANAGEMENT_TOKEN=<Content Delivery API - access token>
 ```
 
 > Todas as variáveis são lidas via `import.meta.env`, portanto não é necessário reiniciar o servidor do Vite após alterações, bastando parar e subir novamente o comando `npm run dev`.

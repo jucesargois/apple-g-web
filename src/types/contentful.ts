@@ -93,7 +93,7 @@ export interface StorefrontCategory {
   name: string;
   slug: string;
   description?: string;
-  productCount: number;
+  productCount?: number;
 }
 
 export interface StorefrontProduct {
@@ -187,7 +187,6 @@ export const contentModels: ContentModelDefinition[] = [
         id: 'productCount',
         name: 'Quantidade de produtos',
         type: 'Integer',
-        description: 'Campo opcional para sobrescrever a contagem automática de produtos.',
       } as ContentModelField,
     ],
   },

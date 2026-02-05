@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
-import heroBg from '@/assets/hero-bg.jpg';
 
 interface HeroProps {
   title?: string;
@@ -29,7 +28,7 @@ export function Hero({
       {/* Background Image with Overlay */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${backgroundUrl || heroBg})` }}
+        style={{ backgroundImage: `url(${backgroundUrl})` }}
       >
         <div className="absolute inset-0 bg-gradient-hero opacity-90"></div>
       </div>
@@ -55,20 +54,20 @@ export function Hero({
             Ver Catálogo
           </Button>
           
-          <Button
-            variant="outline"
+          <Button 
+            variant="hero" 
             size="xl"
-            className="min-w-[200px] border-white/40 text-white hover:bg-white/10"
             onClick={() => scrollToSection('contato')}
+            className="min-w-[200px]"
           >
-            Falar Conosco
+            Fale Conosco
           </Button>
         </div>
       </div>
 
       {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <ChevronDown className="h-8 w-8 text-white/80" />
+        <ChevronDown className="h-8 w-8 text-white/80" onClick={()=> scrollToSection('catalogo')}/>
       </div>
     </section>
   );

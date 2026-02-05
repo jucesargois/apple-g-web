@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import logo from '@/assets/logo.png';
 
 interface HeaderProps {
   onNavigate: (section: string) => void;
@@ -27,7 +26,7 @@ export function Header({ onNavigate, storeName = 'iStore', logoUrl }: HeaderProp
           {/* Logo */}
           <div className="flex items-center space-x-2">
             <img
-              src={logoUrl || logo}
+              src={logoUrl}
               alt={`Logo da ${storeName}`}
               className="h-10 w-10 object-contain rounded"
             />

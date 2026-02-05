@@ -17,12 +17,18 @@ const ENVIRONMENT = import.meta.env.VITE_CONTENTFUL_ENVIRONMENT ?? 'master';
 const DELIVERY_TOKEN = import.meta.env.VITE_CONTENTFUL_DELIVERY_TOKEN;
 const LOCALE = import.meta.env.VITE_CONTENTFUL_LOCALE?.trim();
 
+
+const API_HOST = import.meta.env.VITE_CONTENTFUL_API_HOST ?? 'cdn.contentful.com';
+console.log(`API_HOST: ${API_HOST}`)
 const BASE_URL = SPACE_ID
-  ? `https://cdn.contentful.com/spaces/${SPACE_ID}/environments/${ENVIRONMENT}`
+  ? `https://${API_HOST}/spaces/${SPACE_ID}/environments/${ENVIRONMENT}`
   : null;
+  console.log('[Contentful] BASE_URL:', BASE_URL);
+  console.log('[Contentful] TOKEN:', DELIVERY_TOKEN ? '✅ set' : '❌ missing');
+  console.log('[Contentful] URL chamada:', `${BASE_URL}`);
 
 const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
-
+// const CACHE_TTL = 0; 
 interface CachedValue<T> {
   value: T;
   expiresAt: number;
@@ -32,6 +38,9 @@ const cache = new Map<string, CachedValue<unknown>>();
 
 function getCachedValue<T>(key: string): T | null {
   const entry = cache.get(key) as CachedValue<T> | undefined;
+  if(entry){
+    console.log("pegou do cache")
+  }
   if (!entry) {
     return null;
   }
